@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>WebSocket客户端</title>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    var socket;
+
+    if(window.WebSocket) {
+
+        socket = new WebSocket("ws://localhost:8899/ws")
+
+        socket.onmessage = function (event) {
+            var ta = document.getElementById("responseText");
+            ta.value = ta.value + "\n" + event.data
+        }
+
+        socket.onopen = function (event) {
+            var ta = document.getElementById("responseText");
+            ta.value = "连接开启"
+        }
+
+        socket.onclose = function (event) {
+            var ta = document.getElementById("responseText");
+            ta.value = "连接关闭"
+        }
+
+    } else {
+        alert("浏览器不支持 WebSocket")
+    }
+
+    function send(message) {
+        if(!window.WebSocket) {
+            return;
+        }
+
+        if(socket.readyState == WebSocket.OPEN) {
+            socket.send(message)
+        } else {
+            alert("连接尚未开启")
+        }
+    }
+</script>
+
+
+<form onsubmit="return false;">
+    <textarea name="message" style="width: 400px; height: 200px"></textarea>
+    <input type="button" value="发送数据" onclick="send(this.form.message.value)"/>
+    <h3>服务端输出：</h3>
+    <textarea id="responseText" style="width: 400px; height: 200px"></textarea>
+    <input type="button" value="清空数据" onclick="javascript: document.getElementById('responseText').value=''"/>
+</form>
+
+
+</body>
+</html>
